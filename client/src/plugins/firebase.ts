@@ -1,6 +1,9 @@
-import { getApps, initializeApp } from 'firebase/app';
+import { loadStripe } from "@stripe/stripe-js";
+import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { addDoc, collection, getFirestore, serverTimestamp } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -13,10 +16,8 @@ const firebaseConfig = {
 };
 
 // 初期化
-const apps = getApps
-if (!apps.length) {
-  initializeApp(firebaseConfig)
-}
+// const apps = getApps
+const app = initializeApp(firebaseConfig)
 export const auth = getAuth();
 export const db = getFirestore();
 export const provider = new GoogleAuthProvider();
@@ -59,22 +60,35 @@ export const googleLogin = () => {
 }
 
 /**
- * chatメッセージ送信
- * @param name 
- * @param message 
+ * stripe連携しクレジット決済を実行する
  */
-export const createDataInFirebase = async (name: string, message: string, photoUrl: string) => {
-  console.log('firebase start', name, message)
+export const getStripeAPI = async () => {
   try {
-    const docRef = await addDoc(collection(db, "messages"), {
-      name,
-      message,
-      photoUrl,
-      time: serverTimestamp()
-    });
-    console.log("Document written with ID:", docRef.id);
-  } catch (e) {
-    console.log('firebase start2')
-    console.error("Error adding document: ", e);
+    const functions = getFunctions(app)
+    const createPaymentSession = httpsCallable(functions, 'createPaymentSession');
+     // 公開可能キーをもとに、stripeオブジェクトを作成
+    const stripePromise = loadStripe(
+      "公開鍵"
+    );
+    const stripe = await stripePromise;
+    createPaymentSession({name: "hoge"})
+      .then((result) => {
+        const data:any = result.data;
+        console.log("🚀 ~ file: firebase.ts ~ line 24 ~ .then ~ data", data)
+        stripe!
+        .redirectToCheckout({
+          sessionId: data.id,
+        })
+        .then((result) => {
+          console.log(result);
+        });
+      })
+      .catch((error) => {
+        const message = error.message;
+        console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ message", message)
+        console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ err", error)
+      });
+  } catch (error) {
+    console.log("🚀 ~ file: firebase.ts ~ line 32 ~ getFirebaseAPI ~ error", error) 
   }
 }
