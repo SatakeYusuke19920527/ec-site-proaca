@@ -9,11 +9,14 @@ const stripe = new Stripe("秘密鍵", {
 
 exports.createPaymentSession = functions.https.onCall(async (data, context) => {
   try {
+    // const priceKey = data.priceKey
+    // console.log("🚀 ~ file: index.ts ~ line 13 ~ exports.createPaymentSession=functions.https.onCall ~ priceKey", priceKey)
+    functions.logger.log(data.priceKey);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: [
       {
-        price:"商品キー",
+        price:data.priceKey,
         quantity: 1,
       },
     ],
@@ -25,6 +28,17 @@ exports.createPaymentSession = functions.https.onCall(async (data, context) => {
     const res = session;
     functions.logger.log(res);
     return res
+  } catch (error) {
+    functions.logger.log("=========ERROR=========");
+    functions.logger.log(error);
+  }
+});
+
+exports.getProductInfo = functions.https.onCall(async (data, context) => {
+  try {
+    const products = await stripe.products.list()
+    functions.logger.log(products);
+    return products
   } catch (error) {
     functions.logger.log("=========ERROR=========");
     functions.logger.log(error);

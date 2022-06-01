@@ -62,7 +62,7 @@ export const googleLogin = () => {
 /**
  * stripe連携しクレジット決済を実行する
  */
-export const getStripeAPI = async () => {
+export const getStripeAPI = async (priceKey: string) => {
   try {
     const functions = getFunctions(app)
     const createPaymentSession = httpsCallable(functions, 'createPaymentSession');
@@ -71,7 +71,7 @@ export const getStripeAPI = async () => {
       "公開鍵"
     );
     const stripe = await stripePromise;
-    createPaymentSession({name: "hoge"})
+    createPaymentSession({priceKey})
       .then((result) => {
         const data:any = result.data;
         console.log("🚀 ~ file: firebase.ts ~ line 24 ~ .then ~ data", data)
@@ -88,6 +88,33 @@ export const getStripeAPI = async () => {
         console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ message", message)
         console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ err", error)
       });
+  } catch (error) {
+    console.log("🚀 ~ file: firebase.ts ~ line 32 ~ getFirebaseAPI ~ error", error) 
+  }
+}
+
+/**
+ * stripe連携し商品一覧を取得
+ */
+export const getProductAPI = async () => {
+  try {
+    const functions = getFunctions(app)
+    const stripeProducts = httpsCallable(functions, 'getProductInfo');
+    return new Promise((resolve, reject) => {
+      stripeProducts({name: "products"})
+      .then((result) => {
+        const data: any = result.data;
+        resolve(data.data);
+        return data.data
+      })
+      .catch((error) => {
+        const message = error.message;
+        console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ message", message)
+        console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ err", error)
+        reject("There is no ice cream");
+      });
+        
+    });
   } catch (error) {
     console.log("🚀 ~ file: firebase.ts ~ line 32 ~ getFirebaseAPI ~ error", error) 
   }

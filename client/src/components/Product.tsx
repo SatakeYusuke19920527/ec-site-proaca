@@ -2,13 +2,28 @@ import React from 'react';
 import { getStripeAPI } from '../plugins/firebase';
 import '../styles/Product.css';
 
-const Product = () => {
+const Product = ({
+  name,
+  desctiption,
+  imgUrl,
+  default_price,
+}: {
+  name: string;
+  desctiption: string;
+  imgUrl: string;
+  default_price: string;
+}) => {
+  const getPayment = async () => {
+    await getStripeAPI(default_price);
+  };
   return (
-    <section className="card-area" onClick={getStripeAPI}>
-      <div className="photo"></div>
+    <section className="card-area" onClick={getPayment}>
+      <div className="photo">
+        <img src={imgUrl} alt={name} />
+      </div>
       <div className="explanation">
-        <p>20,000¥</p>
-        <p>商品情報が掲載されます。</p>
+        <p>{name}</p>
+        <p>{desctiption}</p>
       </div>
     </section>
   );
