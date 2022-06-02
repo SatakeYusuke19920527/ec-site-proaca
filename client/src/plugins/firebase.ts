@@ -64,12 +64,11 @@ export const googleLogin = () => {
  */
 export const getStripeAPI = async (priceKey: string) => {
   try {
+    const publicKey = process.env.REACT_APP_STRIPE_PUBLIC_KEY!
     const functions = getFunctions(app)
     const createPaymentSession = httpsCallable(functions, 'createPaymentSession');
      // 公開可能キーをもとに、stripeオブジェクトを作成
-    const stripePromise = loadStripe(
-      "公開鍵"
-    );
+    const stripePromise = loadStripe(publicKey);
     const stripe = await stripePromise;
     createPaymentSession({priceKey})
       .then((result) => {
@@ -104,8 +103,9 @@ export const getProductAPI = async () => {
       stripeProducts({name: "products"})
       .then((result) => {
         const data: any = result.data;
-        resolve(data.data);
-        return data.data
+        const productAndPrice = JSON.parse(data)
+        resolve(productAndPrice);
+        // return productAndPrice
       })
       .catch((error) => {
         const message = error.message;

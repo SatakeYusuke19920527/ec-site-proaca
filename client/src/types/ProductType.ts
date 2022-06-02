@@ -5,4 +5,5 @@ export type ProductType = {
   images: string[]
   name: string
   object: string
+  unit_amount?: number
 };

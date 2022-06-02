@@ -2,12 +2,12 @@ import * as functions from "firebase-functions";
 const admin = require('firebase-admin');
 admin.initializeApp();
 const Stripe = require("stripe");
-
-const stripe = new Stripe("秘密鍵", {
+const secretkey = functions.config().stripe.secretkey
+const stripe = new Stripe(secretkey, {
   apiVersion: "2020-08-27",
 });
 
-exports.createPaymentSession = functions.https.onCall(async (data, context) => {
+exports.createPaymentSession = functions.https.onCall(async (data, _context) => {
   try {
     // const priceKey = data.priceKey
     // console.log("🚀 ~ file: index.ts ~ line 13 ~ exports.createPaymentSession=functions.https.onCall ~ priceKey", priceKey)
@@ -23,7 +23,7 @@ exports.createPaymentSession = functions.https.onCall(async (data, context) => {
     mode: "payment",
     //決済が終わった後にリダイレクトするURLを設定します
     success_url: `http://localhost:3000?payment_success`,
-    cancel_url: `http://localhost:3000?payment_cancel`,
+    cancel_url: `http://localhost:3000/main?payment_cancel`,
   });
     const res = session;
     functions.logger.log(res);
@@ -36,9 +36,14 @@ exports.createPaymentSession = functions.https.onCall(async (data, context) => {
 
 exports.getProductInfo = functions.https.onCall(async (data, context) => {
   try {
-    const products = await stripe.products.list()
-    functions.logger.log(products);
-    return products
+    return new Promise(async (resolve, reject) => {
+      const products = await stripe.products.list()
+      const prices = await stripe.prices.list()
+      functions.logger.log(products);
+      functions.logger.log(prices);
+      let returnObj = JSON.stringify({products, prices})
+      resolve(returnObj)
+    })
   } catch (error) {
     functions.logger.log("=========ERROR=========");
     functions.logger.log(error);

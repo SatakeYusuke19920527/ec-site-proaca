@@ -1,4 +1,3 @@
-import React from 'react';
 import { getStripeAPI } from '../plugins/firebase';
 import '../styles/Product.css';
 
@@ -7,11 +6,13 @@ const Product = ({
   desctiption,
   imgUrl,
   default_price,
+  unit_amount,
 }: {
   name: string;
   desctiption: string;
   imgUrl: string;
   default_price: string;
+  unit_amount: number;
 }) => {
   const getPayment = async () => {
     await getStripeAPI(default_price);
@@ -23,6 +24,7 @@ const Product = ({
       </div>
       <div className="explanation">
         <p>{name}</p>
+        <p>{unit_amount}円</p>
         <p>{desctiption}</p>
       </div>
     </section>

@@ -18,6 +18,7 @@ const Main = () => {
                 desctiption={product.description}
                 imgUrl={product.images[0]}
                 default_price={product.default_price}
+                unit_amount={product.unit_amount!}
                 key={index}
               />
             );
