@@ -14,6 +14,7 @@ import { selectUser } from '../features/user/userSlice';
 import { useLoginCheck } from '../hooks/useLoginCheck';
 import { useAppSelector } from '../hooks/useRTK';
 import { logoutUser } from '../plugins/firebase';
+import '../styles/Header.css';
 import { UserType } from '../types/UserType';
 
 const pages = ['ラーニング', 'コミュニティ', '転職'];
@@ -55,9 +56,33 @@ const Header = () => {
             variant="h6"
             noWrap
             component="div"
-            sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+            }}
+            className="pointer"
           >
-            ECサイト
+            ProAca
+          </Typography>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            onClick={() => navigate('/main')}
+            sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+            className="pointer"
+          >
+            EC
+          </Typography>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            onClick={() => navigate('/contact')}
+            sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+            className="pointer"
+          >
+            Contact
           </Typography>
           <button onClick={() => logoutUser()}>logoutUser</button>
 

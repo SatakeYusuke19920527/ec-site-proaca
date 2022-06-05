@@ -15,10 +15,10 @@ export const productSlice = createSlice({
   initialState,
   reducers: {
     add_product: (state, action) => {
+      if(state.value.length !== 0) return 
       action.payload.products.data.forEach((product: any) => {
         action.payload.prices.data.forEach((price: any) => {
           if (product.default_price === price.id) {
-            console.log("🚀 ~ file: productSlice.ts ~ line 21 ~ action.payload.prices.data.forEach ~ product.id === price.product", product.id === price.product)
             let tempProduct: ProductType = {
               default_price: product.default_price,
               description: product.description,

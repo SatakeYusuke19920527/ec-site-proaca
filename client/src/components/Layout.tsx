@@ -14,10 +14,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
   const startPaymentSession = async () => {
     const products = await getProductAPI();
-    console.log(
-      '🚀 ~ file: Layout.tsx ~ line 17 ~ startPaymentSession ~ products',
-      products
-    );
     dispatch(add_product(products));
   };
 
