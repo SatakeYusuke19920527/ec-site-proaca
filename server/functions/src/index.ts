@@ -49,3 +49,28 @@ exports.getProductInfo = functions.https.onCall(async (data, context) => {
     functions.logger.log(error);
   }
 });
+
+exports.getUserInfo = functions.https.onCall(async (data, context) => {
+  try {
+    return new Promise(async (resolve, reject) => {
+      const customers = {
+        'email': data.email
+      }
+      stripe.customers.create(
+        customers,
+        function(err: any, customer: { id: string; }) {
+          if(err) {
+            console.log(err)
+          }
+          functions.logger.log("🚀 ~ file: index.ts ~ line 66 ~ returnnewPromise ~ customer.id", customer.id);
+          functions.logger.log("🚀 ~ file: index.ts ~ line 66 ~ returnnewPromise ~ data.email", data.email);
+          let returnObj = JSON.stringify({customerId: customer.id})
+          resolve(returnObj)
+        }
+      );
+    })
+  } catch (error) {
+    functions.logger.log("=========ERROR=========");
+    functions.logger.log(error);
+  }
+});

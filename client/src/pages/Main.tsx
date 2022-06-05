@@ -7,6 +7,7 @@ import '../styles/Main.css';
 
 const Main = () => {
   const products = useAppSelector(selectProducts);
+
   return (
     <Layout>
       <section className="main-section">

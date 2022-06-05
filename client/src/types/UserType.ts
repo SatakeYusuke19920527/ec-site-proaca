@@ -3,4 +3,5 @@ export type UserType = {
   displayName: string,
   email: string,
   photoUrl: string,
+  customerId?:string
 }

@@ -27,11 +27,14 @@ export const userSlice = createSlice({
     },
     updateUserProfile: (state, action: PayloadAction<UserType>) => {
       state.value.displayName = action.payload.displayName;
+    },
+    add_customerId: (state, action) => {
+      state.value.customerId = action.payload
     }
   },
 });
 
-export const { login, logout, updateUserProfile } = userSlice.actions;
+export const { login, logout, updateUserProfile, add_customerId } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user.value;
 

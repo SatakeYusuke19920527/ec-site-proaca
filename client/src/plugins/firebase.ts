@@ -14,6 +14,7 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
+const publicKey = process.env.REACT_APP_STRIPE_PUBLIC_KEY!
 
 // 初期化
 // const apps = getApps
@@ -21,6 +22,7 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth();
 export const db = getFirestore();
 export const provider = new GoogleAuthProvider();
+
 
 
 /**
@@ -64,7 +66,6 @@ export const googleLogin = () => {
  */
 export const getStripeAPI = async (priceKey: string) => {
   try {
-    const publicKey = process.env.REACT_APP_STRIPE_PUBLIC_KEY!
     const functions = getFunctions(app)
     const createPaymentSession = httpsCallable(functions, 'createPaymentSession');
      // 公開可能キーをもとに、stripeオブジェクトを作成
@@ -104,6 +105,7 @@ export const getProductAPI = async () => {
       .then((result) => {
         const data: any = result.data;
         const productAndPrice = JSON.parse(data)
+        console.log("🚀 ~ file: firebase.ts ~ line 106 ~ .then ~ productAndPrice", productAndPrice)
         resolve(productAndPrice);
         // return productAndPrice
       })
@@ -118,4 +120,24 @@ export const getProductAPI = async () => {
   } catch (error) {
     console.log("🚀 ~ file: firebase.ts ~ line 32 ~ getFirebaseAPI ~ error", error) 
   }
+}
+
+/**
+ * customerIdを取得
+ */
+export const getCustomerId = async (email: string) => {
+  return new Promise((resolve, _reject) => {
+    const functions = getFunctions(app)
+    const getUserInfo = httpsCallable(functions, 'getUserInfo');
+    getUserInfo({ email })
+      .then((result) => {
+        const data: any = result.data;
+        const { customerId } = JSON.parse(data)
+        resolve(customerId)
+      })
+  }).catch((error) => {
+    const message = error.message;
+    console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ message", message)
+    console.log("🚀 ~ file: firebase.ts ~ line 30 ~ getFirebaseAPI ~ err", error)
+  });
 }

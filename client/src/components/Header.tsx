@@ -78,6 +78,16 @@ const Header = () => {
             variant="h6"
             noWrap
             component="div"
+            onClick={() => navigate('/history')}
+            sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+            className="pointer"
+          >
+            History
+          </Typography>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
             onClick={() => navigate('/contact')}
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
             className="pointer"
